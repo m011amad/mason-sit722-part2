@@ -1,1 +1,37 @@
-# Write Kubernetes Deployment Script
+# Kubernetes Deployment for book_catalog microservice
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+        - name: book-catalog
+          image: book-catalog
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://book_catalog_db_mhjg_user:PYVGbgFIRNNHI7D75PeOLsFuwlbYY5tw@dpg-crcl69bv2p9s73chtbtg-a.oregon-postgres.render.com/book_catalog_db_mhjg"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
